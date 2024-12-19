@@ -1,6 +1,4 @@
 
-const { response } = require("express");
-
 
 const weatherForm = document.querySelector(".weatherForm");
 const cityInput = document.querySelector(".cityInput");
@@ -9,11 +7,11 @@ const apiKey = "f29db718496190f279ef569a9aaa2182";
 
 
 
-weatherForm.addEventListener("submit", event =>{
+weatherForm.addEventListener("submit", async event =>{
 
     event.preventDefault();
 
-    const city = cityInput.Value;
+    const city = cityInput.value;
 
     if(city){
         try{
@@ -35,9 +33,10 @@ weatherForm.addEventListener("submit", event =>{
 });
 
 async function getWeatherData(city){
+
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
-    const reponse = await fetch(apiUrl);
+    const response = await fetch(apiUrl);
 
     if (!response.ok){
         throw new Error("Could net fetch weather data");
@@ -53,20 +52,20 @@ function displayWeatherInfo(data){
          weather: [{description, id }]} = data;
 
     card.textContent = ""  ;
-    card.Style.display ="flex";   
+    card.style.display ="flex";   
 
 
     const cityDisplay = document.createElement("h1");
     const tempDisplay = document.createElement("p");
     const humidityDisplay = document.createElement("p");
     const descDisplay = document.createElement("p");
-    const getWeatherEmoji = document.createElement("p");
+    const WeatherEmoji = document.createElement("p");
 
     cityDisplay.textContent = city;
-    tempDisplay.textContent = `${((temp - 273.15) * (9/5) + 32).toFixed(1) }°C`;
+    tempDisplay.textContent = `${(temp - 273.15).toFixed(1) }°C`;
     humidityDisplay.textContent = `Humidity: ${(humidity)}%`;
     descDisplay.textContent = description;
-    getWeatherEmoji.textContent = getWeatherEmoji(id)
+    WeatherEmoji.textContent = getWeatherEmoji(id)
 
 
 
@@ -74,7 +73,7 @@ function displayWeatherInfo(data){
     tempDisplay.classList.add("tempDisplay")
     humidityDisplay.classList.add("humidityDisplay")
     descDisplay.classList.add("descDisplay")
-    getWeatherEmoji.classList.add("weatherEmoji")
+    WeatherEmoji.classList.add("weatherEmoji")
 
 
 
@@ -82,14 +81,28 @@ function displayWeatherInfo(data){
     card.appendChild(tempDisplay);
     card.appendChild(humidityDisplay);
     card.appendChild(descDisplay);
-    card.appendChild( weatherEmoji );
+    card.appendChild(WeatherEmoji);
 }
 
 function getWeatherEmoji(weatherId){
 
     switch(true){
         case (weatherId >= 200 && weatherId < 300):
-            return ""
+            return "⛈️"
+        case weatherId >= 300 && weatherId < 500:
+            return "🌧️";
+            case weatherId >= 500 && weatherId < 600:
+            return "🌦️";
+        case weatherId >= 600 && weatherId < 700:
+            return "❄️";
+        case weatherId >= 700 && weatherId < 800:
+            return "🌫️";
+        case weatherId === 800:
+            return "☀️";
+        case weatherId > 800:
+            return "☁️";
+        default:
+            return "🌤️";
     }
     
 }
@@ -101,7 +114,7 @@ function displayError(message){
     errorDisplay.classList.add("errorDisplay");
 
     card.textContent =" ";
-    card.computedStyleMap.display = "flex";
+    card.style.display = "flex";
     card.appendChild(errorDisplay);
 
 
